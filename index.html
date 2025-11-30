@@ -389,13 +389,9 @@
         </div>
     </div>
 
-<script>
+    <script>
         let isPlaying = false;
         let currentVideoId = "";
-
-        // Obfuscated API key
-        const _0x4a2b = ['QUl6YVN5QkVlb2xy', 'UmJCeElmSVNSLWVu', 'bXFvOTBhaGVKMURn', 'Qko4'];
-        const getKey = () => atob(_0x4a2b.map(x => atob(x)).join(''));
 
         document.getElementById("search-button").addEventListener("click", function() {
             let query = document.getElementById("search-input").value;
@@ -414,7 +410,7 @@
         });
 
         function searchMusic(query) {
-            const apiKey = getKey();
+            const apiKey = 'AIzaSyBEeolrRbBxIfISR-enmqo90aheJ1DgBJ8'; 
             const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${query}&type=video&videoCategoryId=10&maxResults=10&key=${apiKey}`;
 
             fetch(url)
