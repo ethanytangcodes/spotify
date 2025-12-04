@@ -23,6 +23,7 @@
             display: flex;
             height: 100vh;
             flex-direction: column;
+            position: relative;
         }
 
         /* Header */
@@ -33,6 +34,7 @@
             align-items: center;
             gap: 20px;
             border-bottom: 1px solid #282828;
+            z-index: 10;
         }
 
         .logo {
@@ -41,17 +43,6 @@
             gap: 12px;
             font-size: 26px;
             font-weight: 700;
-        }
-
-        .logo-icon {
-            width: 40px;
-            height: 40px;
-            background: #1db954;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
         }
 
         .search-bar {
@@ -93,33 +84,222 @@
 
         /* Main Content */
         .main-content {
-            display: flex;
-            flex: 1;
-            overflow: hidden;
-        }
-
-        .center-section {
             flex: 1;
             overflow-y: auto;
             background: #121212;
+            padding-bottom: 100px;
         }
 
         .center-content {
             padding: 30px;
+            max-width: 1400px;
+            margin: 0 auto;
         }
 
-        /* Queue Sidebar */
-        .queue-sidebar {
-            width: 360px;
-            background: #000;
-            border-left: 1px solid #282828;
+        /* Bottom Control Bar */
+        .bottom-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #181818;
+            border-top: 1px solid #282828;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            z-index: 100;
+        }
+
+        .bottom-song-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 180px;
+            flex: 1;
+            max-width: 300px;
+        }
+
+        .bottom-thumbnail {
+            width: 56px;
+            height: 56px;
+            border-radius: 4px;
+            background: #282828;
+            overflow: hidden;
+            flex-shrink: 0;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .bottom-thumbnail:hover {
+            opacity: 0.8;
+        }
+
+        .bottom-thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .bottom-info {
+            flex: 1;
+            min-width: 0;
+            cursor: pointer;
+        }
+
+        .bottom-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: #fff;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-bottom: 4px;
+        }
+
+        .bottom-artist {
+            font-size: 12px;
+            color: #b3b3b3;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .bottom-controls {
+            flex: 2;
             display: flex;
             flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            max-width: 720px;
+        }
+
+        .bottom-buttons {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .bottom-progress {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .bottom-time {
+            font-size: 11px;
+            color: #b3b3b3;
+            min-width: 40px;
+        }
+
+        .bottom-progress-bar {
+            flex: 1;
+            height: 4px;
+            background: #4d4d4d;
+            border-radius: 2px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .bottom-progress-bar:hover .bottom-progress-fill {
+            background: #1db954;
+        }
+
+        .bottom-progress-fill {
+            height: 100%;
+            background: #fff;
+            border-radius: 2px;
+            position: relative;
+            width: 0%;
+            transition: width 0.1s linear;
+        }
+
+        .bottom-progress-handle {
+            position: absolute;
+            right: -6px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 12px;
+            height: 12px;
+            background: #fff;
+            border-radius: 50%;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .bottom-progress-bar:hover .bottom-progress-handle {
+            opacity: 1;
+        }
+
+        .bottom-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 180px;
+            flex: 1;
+            justify-content: flex-end;
+            max-width: 300px;
+        }
+
+        .queue-toggle-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 4px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #b3b3b3;
+            font-size: 14px;
+        }
+
+        .queue-toggle-btn:hover {
+            color: #fff;
+            background: #282828;
+        }
+
+        .queue-toggle-btn.active {
+            color: #1db954;
+        }
+
+        .queue-toggle-btn svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+
+        /* Queue Panel */
+        .queue-panel {
+            position: fixed;
+            right: 0;
+            top: 0;
+            bottom: 90px;
+            width: 400px;
+            background: #121212;
+            border-left: 1px solid #282828;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            z-index: 50;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .queue-panel.open {
+            transform: translateX(0);
         }
 
         .queue-header {
             padding: 20px;
             border-bottom: 1px solid #282828;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .queue-header-left {
             display: flex;
             align-items: center;
             gap: 10px;
@@ -134,6 +314,28 @@
         .queue-title {
             font-size: 18px;
             font-weight: 700;
+        }
+
+        .close-panel-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-panel-btn:hover {
+            background: #282828;
+        }
+
+        .close-panel-btn svg {
+            width: 24px;
+            height: 24px;
+            fill: #b3b3b3;
         }
 
         .queue-content {
@@ -258,56 +460,97 @@
             fill: #b3b3b3;
         }
 
-        /* Now Playing Section */
-        .now-playing {
-            margin-bottom: 30px;
+        /* Now Playing Panel */
+        .now-playing-panel {
+            position: fixed;
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 150;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(20px);
         }
 
-        .now-playing-card {
+        .now-playing-panel.open {
+            display: flex;
+        }
+
+        .now-playing-content {
             background: #181818;
-            border-radius: 8px;
-            padding: 30px;
+            border-radius: 12px;
+            padding: 40px;
+            max-width: 500px;
+            width: 90%;
+            position: relative;
         }
 
-        .album-art {
+        .close-now-playing {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-now-playing:hover {
+            background: #282828;
+        }
+
+        .close-now-playing svg {
+            width: 24px;
+            height: 24px;
+            fill: #b3b3b3;
+        }
+
+        .panel-album-art {
             width: 100%;
-            max-width: 400px;
             aspect-ratio: 1;
             background: #282828;
             border-radius: 8px;
-            margin: 0 auto 30px;
+            margin: 0 auto 24px;
             overflow: hidden;
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
         }
 
-        .album-art img {
+        .panel-album-art img {
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
 
-        .song-info {
+        .panel-song-info {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 24px;
         }
 
-        #song-title {
-            font-size: 28px;
+        .panel-song-title {
+            font-size: 24px;
             font-weight: 700;
             color: #fff;
             margin-bottom: 8px;
         }
 
-        #song-artist {
-            font-size: 16px;
+        .panel-song-artist {
+            font-size: 14px;
             color: #b3b3b3;
         }
 
-        .progress-container {
+        .panel-progress {
             margin-bottom: 20px;
         }
 
-        .time-bar-wrapper {
+        .panel-time-bar {
             position: relative;
             height: 4px;
             background: #4d4d4d;
@@ -316,11 +559,11 @@
             margin-bottom: 8px;
         }
 
-        .time-bar-wrapper:hover .time-bar-progress {
+        .panel-time-bar:hover .panel-time-fill {
             background: #1db954;
         }
 
-        .time-bar-progress {
+        .panel-time-fill {
             height: 100%;
             background: #fff;
             border-radius: 2px;
@@ -329,7 +572,7 @@
             transition: width 0.1s linear;
         }
 
-        .time-bar-handle {
+        .panel-time-handle {
             position: absolute;
             right: -6px;
             top: 50%;
@@ -342,22 +585,22 @@
             transition: opacity 0.2s;
         }
 
-        .time-bar-wrapper:hover .time-bar-handle {
+        .panel-time-bar:hover .panel-time-handle {
             opacity: 1;
         }
 
-        .time-display {
+        .panel-time-display {
             display: flex;
             justify-content: space-between;
-            font-size: 12px;
+            font-size: 11px;
             color: #b3b3b3;
         }
 
-        .controls {
+        .panel-controls {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 16px;
+            gap: 12px;
         }
 
         .control-btn {
@@ -386,18 +629,18 @@
             fill: #fff;
         }
 
-        #play-pause-button {
+        .control-btn.play-btn {
             background: #fff;
             width: 48px;
             height: 48px;
         }
 
-        #play-pause-button:hover {
+        .control-btn.play-btn:hover {
             background: #fff;
             transform: scale(1.06);
         }
 
-        #play-pause-button svg {
+        .control-btn.play-btn svg {
             width: 24px;
             height: 24px;
             fill: #000;
@@ -533,7 +776,7 @@
         <!-- Header -->
         <div class="header">
             <div class="logo">
-                	<img src="https://storage.googleapis.com/pr-newsroom-wp/1/2023/05/Spotify_Primary_Logo_RGB_Green.png" alt="logo" width="40" height="40">
+                <img src="https://storage.googleapis.com/pr-newsroom-wp/1/2023/05/Spotify_Primary_Logo_RGB_Green.png" alt="logo" width="40" height="40">
                 <span>spotyfi</span>
             </div>
             <p>by ethan</p>
@@ -547,84 +790,132 @@
 
         <!-- Main Content -->
         <div class="main-content">
-            <!-- Center Section -->
-            <div class="center-section">
-                <div class="center-content">
-                    <!-- Now Playing -->
-                    <div class="now-playing">
-                        <div class="now-playing-card">
-                            <div class="album-art" id="album-art">
-                                <img id="album-img" src="" alt="" style="display: none;">
-                            </div>
-                            <div class="song-info">
-                                <div id="song-title">no song playing</div>
-                                <div id="song-artist">to start select a song</div>
-                            </div>
-                            
-                            <div class="progress-container">
-                                <div class="time-bar-wrapper" id="time-bar-wrapper">
-                                    <div class="time-bar-progress" id="time-bar-progress">
-                                        <div class="time-bar-handle"></div>
-                                    </div>
-                                </div>
-                                <div class="time-display">
-                                    <span id="current-time">0:00</span>
-                                    <span id="total-time">0:00</span>
-                                </div>
-                            </div>
-
-                            <div class="controls">
-                                <button class="control-btn" id="prev-button" title="prev">
-                                    <svg viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
-                                </button>
-                                <button class="control-btn" id="back-15" title="back 15s">
-                                    <svg viewBox="0 0 24 24"><path d="M11 18V6l-8.5 6 8.5 6zm.5-6l8.5 6V6l-8.5 6z"/></svg>
-                                </button>
-                                <button class="control-btn" id="play-pause-button">
-                                    <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                                </button>
-                                <button class="control-btn" id="forward-15" title="forward 15s">
-                                    <svg viewBox="0 0 24 24"><path d="M4 18l8.5-6L4 6v12zm9-12v12l8.5-6L13 6z"/></svg>
-                                </button>
-                                <button class="control-btn" id="next-button" title="next">
-                                    <svg viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zm9-12v12h2V6h-2z"/></svg>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Search Results -->
-                    <div class="results-section">
-                        <div class="results-header">search results</div>
-                        <div id="song-results" class="results-grid">
-                            <div class="empty-state">
-                                <svg viewBox="0 0 24 24">
-                                    <path d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z"/>
-                                </svg>
-                                <div class="empty-state-title">search for stuff</div>
-                                <div>find some music</div>
-                            </div>
+            <div class="center-content">
+                <!-- Search Results -->
+                <div class="results-section">
+                    <div class="results-header">search results</div>
+                    <div id="song-results" class="results-grid">
+                        <div class="empty-state">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z"/>
+                            </svg>
+                            <div class="empty-state-title">search for stuff</div>
+                            <div>find some music</div>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- Queue Sidebar -->
-            <div class="queue-sidebar">
-                <div class="queue-header">
+        <!-- Bottom Control Bar -->
+        <div class="bottom-bar">
+            <div class="bottom-song-info" id="bottom-song-info">
+                <div class="bottom-thumbnail" id="bottom-thumbnail">
+                    <img id="bottom-img" src="" alt="" style="display: none;">
+                </div>
+                <div class="bottom-info">
+                    <div class="bottom-title" id="bottom-title">no song playing</div>
+                    <div class="bottom-artist" id="bottom-artist">select a song to start</div>
+                </div>
+            </div>
+
+            <div class="bottom-controls">
+                <div class="bottom-buttons">
+                    <button class="control-btn" id="bottom-prev">
+                        <svg viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
+                    </button>
+                    <button class="control-btn play-btn" id="bottom-play-pause">
+                        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                    </button>
+                    <button class="control-btn" id="bottom-next">
+                        <svg viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zm9-12v12h2V6h-2z"/></svg>
+                    </button>
+                </div>
+                <div class="bottom-progress">
+                    <span class="bottom-time" id="bottom-current-time">0:00</span>
+                    <div class="bottom-progress-bar" id="bottom-progress-bar">
+                        <div class="bottom-progress-fill" id="bottom-progress-fill">
+                            <div class="bottom-progress-handle"></div>
+                        </div>
+                    </div>
+                    <span class="bottom-time" id="bottom-total-time">0:00</span>
+                </div>
+            </div>
+
+            <div class="bottom-right">
+                <button class="queue-toggle-btn" id="queue-toggle-btn">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v-2H3v2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z"/>
+                    </svg>
+                    Queue
+                </button>
+            </div>
+        </div>
+
+        <!-- Queue Panel -->
+        <div class="queue-panel" id="queue-panel">
+            <div class="queue-header">
+                <div class="queue-header-left">
                     <svg viewBox="0 0 24 24">
                         <path d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v-2H3v2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z"/>
                     </svg>
                     <span class="queue-title">queue</span>
                 </div>
-                <div class="queue-content" id="queue-content">
-                    <div class="queue-empty">
-                        <svg viewBox="0 0 24 24">
-                            <path d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v-2H3v2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z"/>
-                        </svg>
-                        <div>queue is currently empt</div>
-                        <div style="font-size: 12px; margin-top: 8px;">add stuff to play</div>
+                <button class="close-panel-btn" id="close-queue-btn">
+                    <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+                </button>
+            </div>
+            <div class="queue-content" id="queue-content">
+                <div class="queue-empty">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v-2H3v2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z"/>
+                    </svg>
+                    <div>queue is currently empty</div>
+                    <div style="font-size: 12px; margin-top: 8px;">add stuff to play</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Now Playing Panel -->
+        <div class="now-playing-panel" id="now-playing-panel">
+            <div class="now-playing-content">
+                <button class="close-now-playing" id="close-now-playing">
+                    <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+                </button>
+                <div class="panel-album-art">
+                    <img id="panel-img" src="" alt="" style="display: none;">
+                </div>
+                <div class="panel-song-info">
+                    <div class="panel-song-title" id="panel-title">no song playing</div>
+                    <div class="panel-song-artist" id="panel-artist">select a song to start</div>
+                </div>
+                <div class="panel-progress">
+                    <div class="panel-time-bar" id="panel-time-bar">
+                        <div class="panel-time-fill" id="panel-time-fill">
+                            <div class="panel-time-handle"></div>
+                        </div>
                     </div>
+                    <div class="panel-time-display">
+                        <span id="panel-current-time">0:00</span>
+                        <span id="panel-total-time">0:00</span>
+                    </div>
+                </div>
+                <div class="panel-controls">
+                    <button class="control-btn" id="panel-prev">
+                        <svg viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
+                    </button>
+                    <button class="control-btn" id="panel-back-15">
+                        <svg viewBox="0 0 24 24"><path d="M11 18V6l-8.5 6 8.5 6zm.5-6l8.5 6V6l-8.5 6z"/></svg>
+                    </button>
+                    <button class="control-btn play-btn" id="panel-play-pause">
+                        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                    </button>
+                    <button class="control-btn" id="panel-forward-15">
+                        <svg viewBox="0 0 24 24"><path d="M4 18l8.5-6L4 6v12zm9-12v12l8.5-6L13 6z"/></svg>
+                    </button>
+                    <button class="control-btn" id="panel-next">
+                        <svg viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zm9-12v12h2V6h-2z"/></svg>
+                    </button>
                 </div>
             </div>
         </div>
@@ -659,6 +950,37 @@
             }
         }
 
+        // Queue panel toggle
+        document.getElementById("queue-toggle-btn").addEventListener("click", () => {
+            const panel = document.getElementById("queue-panel");
+            const btn = document.getElementById("queue-toggle-btn");
+            panel.classList.toggle("open");
+            btn.classList.toggle("active");
+        });
+
+        document.getElementById("close-queue-btn").addEventListener("click", () => {
+            document.getElementById("queue-panel").classList.remove("open");
+            document.getElementById("queue-toggle-btn").classList.remove("active");
+        });
+
+        // Now playing panel toggle
+        document.getElementById("bottom-song-info").addEventListener("click", () => {
+            if (currentVideoId) {
+                document.getElementById("now-playing-panel").classList.add("open");
+            }
+        });
+
+        document.getElementById("close-now-playing").addEventListener("click", () => {
+            document.getElementById("now-playing-panel").classList.remove("open");
+        });
+
+        // Close now playing panel when clicking outside
+        document.getElementById("now-playing-panel").addEventListener("click", (e) => {
+            if (e.target.id === "now-playing-panel") {
+                document.getElementById("now-playing-panel").classList.remove("open");
+            }
+        });
+
         document.getElementById("search-input").addEventListener("keypress", e => {
             if (e.key === "Enter") {
                 let query = e.target.value.trim();
@@ -668,26 +990,21 @@
 
         function searchMusic(query) {
             const apiKey = "AIzaSyBEeolrRbBxIfISR-enmqo90aheJ1DgBJ8";
-            const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(
-                query
-            )}&type=video&videoCategoryId=10&maxResults=12&key=${apiKey}`;
+            const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(query)}&type=video&videoCategoryId=10&maxResults=12&key=${apiKey}`;
 
             fetch(url)
                 .then(res => res.json())
                 .then(data => {
                     if (!data.items) {
-                        document.getElementById("song-results").innerHTML =
-                            '<div class="empty-state"><div class="empty-state-title">nothing found</div><div>search for something else</div></div>';
+                        document.getElementById("song-results").innerHTML = '<div class="empty-state"><div class="empty-state-title">nothing found</div><div>search for something else</div></div>';
                         return;
                     }
-
                     const vids = data.items.filter(v => v.id.videoId);
                     displayResults(vids);
                 })
                 .catch(err => {
                     console.error(err);
-                    document.getElementById("song-results").innerHTML =
-                        '<div class="empty-state"><div class="empty-state-title">Search failed</div><div>Please try again</div></div>';
+                    document.getElementById("song-results").innerHTML = '<div class="empty-state"><div class="empty-state-title">Search failed</div><div>Please try again</div></div>';
                 });
         }
 
@@ -698,13 +1015,10 @@
             videos.forEach(video => {
                 const div = document.createElement("div");
                 div.classList.add("result-card");
-
                 const thumbnailUrl = video.snippet.thumbnails.medium.url;
 
                 div.innerHTML = `
-                    <div class="result-thumbnail">
-                        <img src="${thumbnailUrl}" alt="">
-                    </div>
+                    <div class="result-thumbnail"><img src="${thumbnailUrl}" alt=""></div>
                     <div class="result-info">
                         <div class="result-title">${video.snippet.title}</div>
                         <div class="result-artist">${video.snippet.channelTitle}</div>
@@ -729,7 +1043,6 @@
         function addToQueue(song) {
             queue.push(song);
             updateQueueDisplay();
-            
             if (currentIndex === -1) {
                 currentIndex = 0;
                 playSongFromQueue(0);
@@ -738,46 +1051,28 @@
 
         function updateQueueDisplay() {
             const queueContent = document.getElementById("queue-content");
-            
             if (queue.length === 0) {
-                queueContent.innerHTML = `
-                    <div class="queue-empty">
-                        <svg viewBox="0 0 24 24">
-                            <path d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v-2H3v2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z"/>
-                        </svg>
-                        <div>Your queue is empty</div>
-                        <div style="font-size: 12px; margin-top: 8px;">Add songs to get started</div>
-                    </div>
-                `;
+                queueContent.innerHTML = `<div class="queue-empty"><svg viewBox="0 0 24 24"><path d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v-2H3v2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z"/></svg><div>queue is currently empty</div><div style="font-size: 12px; margin-top: 8px;">add stuff to play</div></div>`;
                 return;
             }
 
             queueContent.innerHTML = "";
-
             queue.forEach((song, index) => {
                 const div = document.createElement("div");
                 div.classList.add("queue-item");
-                if (index === currentIndex) {
-                    div.classList.add("active");
-                }
+                if (index === currentIndex) div.classList.add("active");
 
                 div.innerHTML = `
-                    <div class="queue-thumbnail">
-                        <img src="${song.thumbnail}" alt="">
-                    </div>
+                    <div class="queue-thumbnail"><img src="${song.thumbnail}" alt=""></div>
                     <div class="queue-info">
                         <div class="queue-song-title">${song.title}</div>
                         <div class="queue-artist">${song.artist}</div>
                     </div>
-                    <button class="queue-remove">
-                        <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
-                    </button>
+                    <button class="queue-remove"><svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button>
                 `;
 
                 div.addEventListener("click", (e) => {
-                    if (!e.target.closest('.queue-remove')) {
-                        playSongFromQueue(index);
-                    }
+                    if (!e.target.closest('.queue-remove')) playSongFromQueue(index);
                 });
 
                 div.querySelector('.queue-remove').addEventListener('click', (e) => {
@@ -801,30 +1096,53 @@
 
         function playSongFromQueue(index) {
             if (index < 0 || index >= queue.length) return;
-            
             currentIndex = index;
             const song = queue[index];
             currentVideoId = song.videoId;
-
-            document.getElementById("song-title").textContent = song.title;
-            document.getElementById("song-artist").textContent = song.artist;
-            
-            const albumImg = document.getElementById("album-img");
-            albumImg.src = song.thumbnail;
-            albumImg.style.display = "block";
-
+            updateSongInfo(song);
             player.loadVideoById(song.videoId);
             player.playVideo();
             player.unMute();
-
             isPlaying = true;
-            updateButton();
+            updateAllButtons();
             updateQueueDisplay();
         }
 
-        document.getElementById("play-pause-button").addEventListener("click", () => {
-            if (!currentVideoId) return;
+        function updateSongInfo(song) {
+            document.getElementById("bottom-title").textContent = song.title;
+            document.getElementById("bottom-artist").textContent = song.artist;
+            const bottomImg = document.getElementById("bottom-img");
+            bottomImg.src = song.thumbnail;
+            bottomImg.style.display = "block";
 
+            document.getElementById("panel-title").textContent = song.title;
+            document.getElementById("panel-artist").textContent = song.artist;
+            const panelImg = document.getElementById("panel-img");
+            panelImg.src = song.thumbnail;
+            panelImg.style.display = "block";
+        }
+
+        document.getElementById("bottom-play-pause").addEventListener("click", togglePlayPause);
+        document.getElementById("bottom-next").addEventListener("click", playNext);
+        document.getElementById("bottom-prev").addEventListener("click", playPrev);
+        document.getElementById("panel-play-pause").addEventListener("click", togglePlayPause);
+        document.getElementById("panel-next").addEventListener("click", playNext);
+        document.getElementById("panel-prev").addEventListener("click", playPrev);
+
+        document.getElementById("panel-back-15").addEventListener("click", () => {
+            if (!currentVideoId) return;
+            const currentTime = player.getCurrentTime();
+            player.seekTo(Math.max(0, currentTime - 15), true);
+        });
+
+        document.getElementById("panel-forward-15").addEventListener("click", () => {
+            if (!currentVideoId) return;
+            const currentTime = player.getCurrentTime();
+            player.seekTo(currentTime + 15, true);
+        });
+
+        function togglePlayPause() {
+            if (!currentVideoId) return;
             if (isPlaying) {
                 player.pauseVideo();
                 isPlaying = false;
@@ -833,59 +1151,40 @@
                 player.unMute();
                 isPlaying = true;
             }
-            updateButton();
-        });
-
-        document.getElementById("next-button").addEventListener("click", playNext);
-        document.getElementById("prev-button").addEventListener("click", playPrev);
+            updateAllButtons();
+        }
 
         function playNext() {
-            if (currentIndex < queue.length - 1) {
-                playSongFromQueue(currentIndex + 1);
-            }
+            if (currentIndex < queue.length - 1) playSongFromQueue(currentIndex + 1);
         }
 
         function playPrev() {
-            if (currentIndex > 0) {
-                playSongFromQueue(currentIndex - 1);
-            }
+            if (currentIndex > 0) playSongFromQueue(currentIndex - 1);
         }
 
-        document.getElementById("back-15").addEventListener("click", () => {
-            if (!currentVideoId) return;
-            const currentTime = player.getCurrentTime();
-            player.seekTo(Math.max(0, currentTime - 15), true);
-        });
-
-        document.getElementById("forward-15").addEventListener("click", () => {
-            if (!currentVideoId) return;
-            const currentTime = player.getCurrentTime();
-            player.seekTo(currentTime + 15, true);
-        });
-
-        function updateButton() {
-            const btn = document.getElementById("play-pause-button");
-            btn.innerHTML = isPlaying
-                ? '<svg viewBox="0 0 24 24"><path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/></svg>'
-                : '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>';
+        function updateAllButtons() {
+            const playIcon = '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>';
+            const pauseIcon = '<svg viewBox="0 0 24 24"><path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/></svg>';
+            const icon = isPlaying ? pauseIcon : playIcon;
+            document.getElementById("bottom-play-pause").innerHTML = icon;
+            document.getElementById("panel-play-pause").innerHTML = icon;
         }
 
         function updateProgress() {
             if (!player || !player.getCurrentTime || isDragging) return;
-            
             try {
                 const current = player.getCurrentTime();
                 const total = player.getDuration();
-                
                 if (total > 0) {
                     const percent = (current / total) * 100;
-                    document.getElementById("time-bar-progress").style.width = percent + "%";
-                    document.getElementById("current-time").textContent = formatTime(current);
-                    document.getElementById("total-time").textContent = formatTime(total);
+                    document.getElementById("bottom-progress-fill").style.width = percent + "%";
+                    document.getElementById("bottom-current-time").textContent = formatTime(current);
+                    document.getElementById("bottom-total-time").textContent = formatTime(total);
+                    document.getElementById("panel-time-fill").style.width = percent + "%";
+                    document.getElementById("panel-current-time").textContent = formatTime(current);
+                    document.getElementById("panel-total-time").textContent = formatTime(total);
                 }
-            } catch (e) {
-                // Ignore errors
-            }
+            } catch (e) {}
         }
 
         function formatTime(seconds) {
@@ -894,32 +1193,40 @@
             return `${mins}:${secs.toString().padStart(2, '0')}`;
         }
 
-        const timeBarWrapper = document.getElementById("time-bar-wrapper");
-        
-        timeBarWrapper.addEventListener("mousedown", (e) => {
+        const bottomProgressBar = document.getElementById("bottom-progress-bar");
+        bottomProgressBar.addEventListener("mousedown", (e) => {
             if (!currentVideoId) return;
             isDragging = true;
-            seekToPosition(e);
+            seekToPosition(e, bottomProgressBar);
         });
 
         document.addEventListener("mousemove", (e) => {
-            if (isDragging) {
-                seekToPosition(e);
-            }
+            if (isDragging) seekToPosition(e, bottomProgressBar);
         });
 
         document.addEventListener("mouseup", () => {
             isDragging = false;
         });
 
-        function seekToPosition(e) {
-            const rect = timeBarWrapper.getBoundingClientRect();
+        const panelTimeBar = document.getElementById("panel-time-bar");
+        panelTimeBar.addEventListener("mousedown", (e) => {
+            if (!currentVideoId) return;
+            isDragging = true;
+            seekToPosition(e, panelTimeBar);
+        });
+
+        panelTimeBar.addEventListener("mousemove", (e) => {
+            if (isDragging) seekToPosition(e, panelTimeBar);
+        });
+
+        function seekToPosition(e, element) {
+            const rect = element.getBoundingClientRect();
             const percent = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
             const duration = player.getDuration();
             const seekTime = duration * percent;
-            
             player.seekTo(seekTime, true);
-            document.getElementById("time-bar-progress").style.width = (percent * 100) + "%";
+            document.getElementById("bottom-progress-fill").style.width = (percent * 100) + "%";
+            document.getElementById("panel-time-fill").style.width = (percent * 100) + "%";
         }
     </script>
 </body>
