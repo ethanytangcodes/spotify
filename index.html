@@ -1,1233 +1,730 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>spotyfi by ethan</title>
+    <title>Cosmos Music Player</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
     <style>
-        * {
+        html,
+        body {
+            height: 100vh;
             margin: 0;
             padding: 0;
+            background: #000;
+            overflow: hidden;
+        }
+
+        body {
+            background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%);
+            position: relative;
+        }
+
+        /* Animated stars background */
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 3s infinite;
+        }
+
+        * {
+            font-family: Inter, Arial, sans-serif;
+            font-weight: 500;
+            letter-spacing: -0.5px;
             box-sizing: border-box;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: #000;
-            color: #fff;
-            min-height: 100vh;
-            overflow: hidden;
-        }
-
-        .app-container {
-            display: flex;
-            height: 100vh;
-            flex-direction: column;
-            position: relative;
-        }
-
-        /* Header */
-        .header {
-            background: #000;
-            padding: 20px 30px;
             display: flex;
             align-items: center;
-            gap: 20px;
-            border-bottom: 1px solid #282828;
-            z-index: 10;
+            justify-content: center;
         }
 
-        .logo {
+        a {
+            text-decoration: none;
+        }
+
+        .cosmic-glass {
             display: flex;
             align-items: center;
             gap: 12px;
-            font-size: 26px;
-            font-weight: 700;
-        }
-
-        .search-bar {
-            flex: 1;
-            max-width: 600px;
+            padding: 12px 32px;
+            border-radius: 1.5rem;
+            border: 1px solid rgba(138, 43, 226, 0.3);
+            background: rgba(15, 15, 35, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow:
+                inset 0 2px 4px rgba(138, 43, 226, 0.1),
+                0 8px 32px rgba(75, 0, 130, 0.3);
+            color: #ffffff;
+            font-size: 24px;
+            transition: all 0.3s ease;
             position: relative;
         }
 
-        .search-icon {
+        .cosmic-glass::before {
+            content: "";
             position: absolute;
-            left: 16px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 20px;
-            height: 20px;
-            fill: #b3b3b3;
+            inset: 0;
+            border-radius: 1.5rem;
+            padding: 1px;
+            background: linear-gradient(135deg,
+                    rgba(138, 43, 226, 0.5) 0%,
+                    rgba(75, 0, 130, 0.3) 50%,
+                    rgba(138, 43, 226, 0.5) 100%);
+            -webkit-mask:
+                linear-gradient(#fff 0 0) content-box,
+                linear-gradient(#fff 0 0);
+            mask:
+                linear-gradient(#fff 0 0) content-box,
+                linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
         }
 
-        #search-input {
-            width: 100%;
-            padding: 12px 16px 12px 48px;
-            background: #242424;
-            border: none;
-            border-radius: 24px;
-            font-size: 14px;
-            color: #fff;
+        input {
             outline: none;
-            transition: all 0.2s;
         }
 
-        #search-input:focus {
-            background: #2a2a2a;
-            box-shadow: 0 0 0 2px #1db954;
+        .input-wrapper:has(input:focus) {
+            background: rgba(138, 43, 226, 0.15);
+            border-color: rgba(138, 43, 226, 0.5);
         }
 
-        #search-input::placeholder {
-            color: #b3b3b3;
-        }
-
-        /* Main Content */
-        .main-content {
-            flex: 1;
-            overflow-y: auto;
-            background: #121212;
-            padding-bottom: 100px;
-        }
-
-        .center-content {
-            padding: 30px;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        /* Bottom Control Bar */
-        .bottom-bar {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: #181818;
-            border-top: 1px solid #282828;
-            padding: 12px 16px;
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            z-index: 100;
-        }
-
-        .bottom-song-info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            min-width: 180px;
-            flex: 1;
-            max-width: 300px;
-        }
-
-        .bottom-thumbnail {
-            width: 56px;
-            height: 56px;
-            border-radius: 4px;
-            background: #282828;
-            overflow: hidden;
-            flex-shrink: 0;
-            cursor: pointer;
-            transition: opacity 0.2s;
-        }
-
-        .bottom-thumbnail:hover {
-            opacity: 0.8;
-        }
-
-        .bottom-thumbnail img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .bottom-info {
-            flex: 1;
-            min-width: 0;
-            cursor: pointer;
-        }
-
-        .bottom-title {
-            font-size: 14px;
-            font-weight: 500;
-            color: #fff;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            margin-bottom: 4px;
-        }
-
-        .bottom-artist {
-            font-size: 12px;
-            color: #b3b3b3;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .bottom-controls {
-            flex: 2;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
-            max-width: 720px;
-        }
-
-        .bottom-buttons {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .bottom-progress {
-            width: 100%;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .bottom-time {
-            font-size: 11px;
-            color: #b3b3b3;
-            min-width: 40px;
-        }
-
-        .bottom-progress-bar {
-            flex: 1;
-            height: 4px;
-            background: #4d4d4d;
-            border-radius: 2px;
-            cursor: pointer;
-            position: relative;
-        }
-
-        .bottom-progress-bar:hover .bottom-progress-fill {
-            background: #1db954;
-        }
-
-        .bottom-progress-fill {
-            height: 100%;
-            background: #fff;
-            border-radius: 2px;
-            position: relative;
-            width: 0%;
-            transition: width 0.1s linear;
-        }
-
-        .bottom-progress-handle {
-            position: absolute;
-            right: -6px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 12px;
-            height: 12px;
-            background: #fff;
-            border-radius: 50%;
-            opacity: 0;
-            transition: opacity 0.2s;
-        }
-
-        .bottom-progress-bar:hover .bottom-progress-handle {
-            opacity: 1;
-        }
-
-        .bottom-right {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            min-width: 180px;
-            flex: 1;
-            justify-content: flex-end;
-            max-width: 300px;
-        }
-
-        .queue-toggle-btn {
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 8px;
-            border-radius: 4px;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            color: #b3b3b3;
-            font-size: 14px;
-        }
-
-        .queue-toggle-btn:hover {
-            color: #fff;
-            background: #282828;
-        }
-
-        .queue-toggle-btn.active {
-            color: #1db954;
-        }
-
-        .queue-toggle-btn svg {
-            width: 20px;
-            height: 20px;
-            fill: currentColor;
-        }
-
-        /* Queue Panel */
-        .queue-panel {
-            position: fixed;
-            right: 0;
-            top: 0;
-            bottom: 90px;
-            width: 400px;
-            background: #121212;
-            border-left: 1px solid #282828;
-            transform: translateX(100%);
-            transition: transform 0.3s ease;
-            z-index: 50;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .queue-panel.open {
-            transform: translateX(0);
-        }
-
-        .queue-header {
-            padding: 20px;
-            border-bottom: 1px solid #282828;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .queue-header-left {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .queue-header svg {
-            width: 22px;
-            height: 22px;
-            fill: #1db954;
-        }
-
-        .queue-title {
-            font-size: 18px;
-            font-weight: 700;
-        }
-
-        .close-panel-btn {
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 8px;
-            border-radius: 50%;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .close-panel-btn:hover {
-            background: #282828;
-        }
-
-        .close-panel-btn svg {
-            width: 24px;
-            height: 24px;
-            fill: #b3b3b3;
-        }
-
-        .queue-content {
-            flex: 1;
-            overflow-y: auto;
-            padding: 10px;
-        }
-
-        .queue-empty {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-            color: #b3b3b3;
-            text-align: center;
-            padding: 40px 20px;
-        }
-
-        .queue-empty svg {
-            width: 64px;
-            height: 64px;
-            fill: #282828;
-            margin-bottom: 15px;
-        }
-
-        .queue-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 8px;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.2s;
-            margin-bottom: 4px;
-            position: relative;
-        }
-
-        .queue-item:hover {
-            background: #1a1a1a;
-        }
-
-        .queue-item.active {
-            background: #1a1a1a;
-        }
-
-        .queue-item.active::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 3px;
-            height: 60%;
-            background: #1db954;
-            border-radius: 0 2px 2px 0;
-        }
-
-        .queue-thumbnail {
-            width: 48px;
-            height: 48px;
-            border-radius: 4px;
-            overflow: hidden;
-            flex-shrink: 0;
-            background: #282828;
-        }
-
-        .queue-thumbnail img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .queue-info {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .queue-song-title {
-            font-size: 14px;
-            font-weight: 500;
-            color: #fff;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            margin-bottom: 4px;
-        }
-
-        .queue-item.active .queue-song-title {
-            color: #1db954;
-        }
-
-        .queue-artist {
-            font-size: 12px;
-            color: #b3b3b3;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .queue-remove {
-            padding: 6px;
-            background: none;
-            border: none;
-            cursor: pointer;
-            border-radius: 50%;
-            transition: all 0.2s;
-            opacity: 0;
-        }
-
-        .queue-item:hover .queue-remove {
-            opacity: 1;
-        }
-
-        .queue-remove:hover {
-            background: #282828;
-        }
-
-        .queue-remove svg {
-            width: 16px;
-            height: 16px;
-            fill: #b3b3b3;
-        }
-
-        /* Now Playing Panel */
-        .now-playing-panel {
-            position: fixed;
-            left: 0;
-            right: 0;
-            top: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.9);
-            z-index: 150;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            backdrop-filter: blur(20px);
-        }
-
-        .now-playing-panel.open {
-            display: flex;
-        }
-
-        .now-playing-content {
-            background: #181818;
+        .result img {
             border-radius: 12px;
-            padding: 40px;
-            max-width: 500px;
-            width: 90%;
-            position: relative;
+            margin-left: -10px;
         }
 
-        .close-now-playing {
-            position: absolute;
-            top: 16px;
-            right: 16px;
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 8px;
-            border-radius: 50%;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .close-now-playing:hover {
-            background: #282828;
-        }
-
-        .close-now-playing svg {
-            width: 24px;
-            height: 24px;
-            fill: #b3b3b3;
-        }
-
-        .panel-album-art {
-            width: 100%;
-            aspect-ratio: 1;
-            background: #282828;
-            border-radius: 8px;
-            margin: 0 auto 24px;
-            overflow: hidden;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
-        }
-
-        .panel-album-art img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .panel-song-info {
-            text-align: center;
-            margin-bottom: 24px;
-        }
-
-        .panel-song-title {
-            font-size: 24px;
-            font-weight: 700;
-            color: #fff;
-            margin-bottom: 8px;
-        }
-
-        .panel-song-artist {
-            font-size: 14px;
-            color: #b3b3b3;
-        }
-
-        .panel-progress {
-            margin-bottom: 20px;
-        }
-
-        .panel-time-bar {
-            position: relative;
-            height: 4px;
-            background: #4d4d4d;
-            border-radius: 2px;
-            cursor: pointer;
-            margin-bottom: 8px;
-        }
-
-        .panel-time-bar:hover .panel-time-fill {
-            background: #1db954;
-        }
-
-        .panel-time-fill {
-            height: 100%;
-            background: #fff;
-            border-radius: 2px;
-            position: relative;
-            width: 0%;
-            transition: width 0.1s linear;
-        }
-
-        .panel-time-handle {
-            position: absolute;
-            right: -6px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 12px;
-            height: 12px;
-            background: #fff;
-            border-radius: 50%;
-            opacity: 0;
-            transition: opacity 0.2s;
-        }
-
-        .panel-time-bar:hover .panel-time-handle {
-            opacity: 1;
-        }
-
-        .panel-time-display {
-            display: flex;
-            justify-content: space-between;
-            font-size: 11px;
-            color: #b3b3b3;
-        }
-
-        .panel-controls {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-        }
-
-        .control-btn {
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 8px;
-            border-radius: 50%;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .control-btn:hover {
-            transform: scale(1.06);
-        }
-
-        .control-btn svg {
-            width: 20px;
-            height: 20px;
-            fill: #b3b3b3;
-        }
-
-        .control-btn:hover svg {
-            fill: #fff;
-        }
-
-        .control-btn.play-btn {
-            background: #fff;
-            width: 48px;
-            height: 48px;
-        }
-
-        .control-btn.play-btn:hover {
-            background: #fff;
-            transform: scale(1.06);
-        }
-
-        .control-btn.play-btn svg {
-            width: 24px;
-            height: 24px;
-            fill: #000;
-        }
-
-        /* Results Section */
-        .results-header {
-            font-size: 24px;
-            font-weight: 700;
-            margin-bottom: 20px;
-        }
-
-        .results-grid {
-            display: grid;
-            gap: 16px;
-        }
-
-        .result-card {
-            background: #181818;
-            border-radius: 8px;
-            padding: 16px;
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .result-card:hover {
-            background: #282828;
-        }
-
-        .result-thumbnail {
-            width: 80px;
-            height: 80px;
-            border-radius: 4px;
-            overflow: hidden;
-            flex-shrink: 0;
-            background: #282828;
-        }
-
-        .result-thumbnail img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .result-info {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .result-title {
+        .result .title {
             font-size: 16px;
             font-weight: 600;
+            margin-bottom: 4px;
             color: #fff;
-            margin-bottom: 6px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
         }
 
-        .result-artist {
-            font-size: 14px;
-            color: #b3b3b3;
+        .result .artist {
+            font-size: 13px;
+            color: #b8b8ff;
         }
 
-        .add-btn {
-            padding: 10px 24px;
-            background: #1db954;
-            color: #000;
-            border: none;
-            border-radius: 24px;
-            font-size: 14px;
-            font-weight: 700;
+        .result {
+            transition: all 0.3s cubic-bezier(.34, 1.56, .64, 1);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .result:hover {
             cursor: pointer;
-            transition: all 0.2s;
-            white-space: nowrap;
+            background: rgba(138, 43, 226, 0.15);
+            transform: translateX(5px);
         }
 
-        .add-btn:hover {
-            background: #1ed760;
-            transform: scale(1.04);
+        .like-btn {
+            margin-left: auto;
+            background: none;
+            border: none;
+            color: #888;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 8px;
         }
 
-        .empty-state {
+        .like-btn:hover {
+            color: #ff69b4;
+            transform: scale(1.2);
+        }
+
+        .like-btn.liked {
+            color: #ff69b4;
+        }
+
+        #cover-img {
+            width: 280px;
+            height: 280px;
+            border-radius: 1.5rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            position: relative;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 20px 40px rgba(138, 43, 226, 0.4);
+        }
+
+        #cover-img i {
+            font-size: 80px;
+            color: #ffffff;
+            opacity: 0.4;
+        }
+
+        .player-pane h1 {
+            margin-top: 20px;
+            font-size: 22px;
+            color: #ffffff;
+            position: relative;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 280px;
             text-align: center;
-            padding: 80px 20px;
-            color: #b3b3b3;
         }
 
-        .empty-state svg {
-            width: 80px;
-            height: 80px;
-            fill: #282828;
-            margin-bottom: 20px;
+        .player-pane p {
+            font-size: 14px;
+            color: #b8b8ff;
+            margin-top: -10px;
+            position: relative;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 280px;
+            text-align: center;
         }
 
-        .empty-state-title {
-            font-size: 24px;
-            font-weight: 700;
-            color: #fff;
-            margin-bottom: 8px;
+        .progress-bar {
+            width: 280px;
+            height: 6px;
+            background: rgba(138, 43, 226, 0.2);
+            border-radius: 4px;
+            margin: 15px auto 0 auto;
+            overflow: hidden;
+            cursor: pointer;
         }
 
-        #youtube-player {
-            display: none;
+        .progress-inner {
+            width: 0;
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            box-shadow: 0 0 15px rgba(138, 43, 226, 0.8);
+            border-radius: 4px;
+            transition: width 0.1s linear;
         }
 
-        /* Scrollbar */
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .controls button {
+            transition: all 0.3s cubic-bezier(.34, 1.56, .64, 1);
+            font-size: 20px;
+        }
+
+        .controls button:hover {
+            transform: scale(1.1);
+            background: rgba(138, 43, 226, 0.25);
+            box-shadow: 0 8px 32px rgba(138, 43, 226, 0.4);
+        }
+
+        #results {
+            overflow-y: auto;
+            height: 90%;
+            overflow-x: hidden;
+            padding-right: 7px;
+        }
+
         ::-webkit-scrollbar {
-            width: 12px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: transparent;
+            width: 4px;
+            background: rgba(138, 43, 226, 0.1);
+            border-radius: 10px;
         }
 
         ::-webkit-scrollbar-thumb {
-            background: #282828;
-            border-radius: 6px;
+            background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+            border-radius: 10px;
         }
 
-        ::-webkit-scrollbar-thumb:hover {
-            background: #3e3e3e;
+        .tab-nav {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 10px;
+            background: rgba(138, 43, 226, 0.1);
+            border: 1px solid rgba(138, 43, 226, 0.3);
+            border-radius: 12px;
+            color: #b8b8ff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .tab-btn:hover {
+            background: rgba(138, 43, 226, 0.2);
+        }
+
+        .tab-btn.active {
+            background: rgba(138, 43, 226, 0.3);
+            color: #fff;
+            border-color: rgba(138, 43, 226, 0.5);
+        }
+
+        .progress-timers {
+            width: 280px;
+            position: relative;
+            left: 50%;
+            transform: translateX(-50%);
+            margin-top: 5px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .progress-timers span {
+            color: #b8b8ff;
+            font-size: 11px;
         }
     </style>
 </head>
+
 <body>
-    <div class="app-container">
-        <!-- Header -->
-        <div class="header">
-            <div class="logo">
-                <img src="https://storage.googleapis.com/pr-newsroom-wp/1/2023/05/Spotify_Primary_Logo_RGB_Green.png" alt="logo" width="40" height="40">
-                <span>spotyfi</span>
-            </div>
-            <p>by ethan</p>
-            <div class="search-bar">
-                <svg class="search-icon" viewBox="0 0 24 24">
-                    <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
-                </svg>
-                <input type="text" id="search-input" placeholder="search for stuff">
-            </div>
-        </div>
+    <div class="stars" id="stars"></div>
 
-        <!-- Main Content -->
-        <div class="main-content">
-            <div class="center-content">
-                <!-- Search Results -->
-                <div class="results-section">
-                    <div class="results-header">search results</div>
-                    <div id="song-results" class="results-grid">
-                        <div class="empty-state">
-                            <svg viewBox="0 0 24 24">
-                                <path d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z"/>
-                            </svg>
-                            <div class="empty-state-title">search for stuff</div>
-                            <div>find some music</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Bottom Control Bar -->
-        <div class="bottom-bar">
-            <div class="bottom-song-info" id="bottom-song-info">
-                <div class="bottom-thumbnail" id="bottom-thumbnail">
-                    <img id="bottom-img" src="" alt="" style="display: none;">
-                </div>
-                <div class="bottom-info">
-                    <div class="bottom-title" id="bottom-title">no song playing</div>
-                    <div class="bottom-artist" id="bottom-artist">select a song to start</div>
-                </div>
-            </div>
-
-            <div class="bottom-controls">
-                <div class="bottom-buttons">
-                    <button class="control-btn" id="bottom-prev">
-                        <svg viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
-                    </button>
-                    <button class="control-btn play-btn" id="bottom-play-pause">
-                        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                    </button>
-                    <button class="control-btn" id="bottom-next">
-                        <svg viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zm9-12v12h2V6h-2z"/></svg>
-                    </button>
-                </div>
-                <div class="bottom-progress">
-                    <span class="bottom-time" id="bottom-current-time">0:00</span>
-                    <div class="bottom-progress-bar" id="bottom-progress-bar">
-                        <div class="bottom-progress-fill" id="bottom-progress-fill">
-                            <div class="bottom-progress-handle"></div>
-                        </div>
-                    </div>
-                    <span class="bottom-time" id="bottom-total-time">0:00</span>
-                </div>
-            </div>
-
-            <div class="bottom-right">
-                <button class="queue-toggle-btn" id="queue-toggle-btn">
-                    <svg viewBox="0 0 24 24">
-                        <path d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v-2H3v2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z"/>
-                    </svg>
-                    Queue
+    <div class="cosmic-glass" style="width: 700px; height: 550px;">
+        <div class="search-pane" style="width: 50%; height: 95%; display: flex; flex-direction: column;">
+            <div class="tab-nav">
+                <button class="tab-btn active" onclick="switchTab('search')">
+                    <i class="fas fa-search"></i> Search
+                </button>
+                <button class="tab-btn" onclick="switchTab('liked')">
+                    <i class="fas fa-heart"></i> Liked
                 </button>
             </div>
-        </div>
-
-        <!-- Queue Panel -->
-        <div class="queue-panel" id="queue-panel">
-            <div class="queue-header">
-                <div class="queue-header-left">
-                    <svg viewBox="0 0 24 24">
-                        <path d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v-2H3v2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z"/>
-                    </svg>
-                    <span class="queue-title">queue</span>
+            
+            <div id="search-tab">
+                <div class="input-wrapper cosmic-glass" style="padding: 0; margin-bottom: 15px;">
+                    <input type="text" id="search-input"
+                        style="background: transparent; border-radius: 2rem; font-size: 16px; border: none; padding: 0.8rem; color: white; width: 100%;"
+                        placeholder="Search for a song...">
                 </div>
-                <button class="close-panel-btn" id="close-queue-btn">
-                    <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
-                </button>
+                <div id="results"></div>
             </div>
-            <div class="queue-content" id="queue-content">
-                <div class="queue-empty">
-                    <svg viewBox="0 0 24 24">
-                        <path d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v-2H3v2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z"/>
-                    </svg>
-                    <div>queue is currently empty</div>
-                    <div style="font-size: 12px; margin-top: 8px;">add stuff to play</div>
-                </div>
+            
+            <div id="liked-tab" style="display: none; height: 100%; overflow-y: auto;">
+                <div id="liked-results"></div>
             </div>
         </div>
-
-        <!-- Now Playing Panel -->
-        <div class="now-playing-panel" id="now-playing-panel">
-            <div class="now-playing-content">
-                <button class="close-now-playing" id="close-now-playing">
-                    <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
-                </button>
-                <div class="panel-album-art">
-                    <img id="panel-img" src="" alt="" style="display: none;">
-                </div>
-                <div class="panel-song-info">
-                    <div class="panel-song-title" id="panel-title">no song playing</div>
-                    <div class="panel-song-artist" id="panel-artist">select a song to start</div>
-                </div>
-                <div class="panel-progress">
-                    <div class="panel-time-bar" id="panel-time-bar">
-                        <div class="panel-time-fill" id="panel-time-fill">
-                            <div class="panel-time-handle"></div>
-                        </div>
-                    </div>
-                    <div class="panel-time-display">
-                        <span id="panel-current-time">0:00</span>
-                        <span id="panel-total-time">0:00</span>
-                    </div>
-                </div>
-                <div class="panel-controls">
-                    <button class="control-btn" id="panel-prev">
-                        <svg viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
-                    </button>
-                    <button class="control-btn" id="panel-back-15">
-                        <svg viewBox="0 0 24 24"><path d="M11 18V6l-8.5 6 8.5 6zm.5-6l8.5 6V6l-8.5 6z"/></svg>
-                    </button>
-                    <button class="control-btn play-btn" id="panel-play-pause">
-                        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                    </button>
-                    <button class="control-btn" id="panel-forward-15">
-                        <svg viewBox="0 0 24 24"><path d="M4 18l8.5-6L4 6v12zm9-12v12l8.5-6L13 6z"/></svg>
-                    </button>
-                    <button class="control-btn" id="panel-next">
-                        <svg viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zm9-12v12h2V6h-2z"/></svg>
-                    </button>
-                </div>
+        
+        <div class="player-pane" style="width: 50%; height: 95%; position: relative;">
+            <div id="cover-img">
+                <i class="fas fa-compact-disc"></i>
+            </div>
+            <h1 id="song-name">No track</h1>
+            <p id="artist-name">Search for music to begin your journey</p>
+            <div class="progress-bar">
+                <div class="progress-inner"></div>
+            </div>
+            <div class="progress-timers">
+                <span id="current-time">0:00</span>
+                <span id="total-time">0:00</span>
+            </div>
+            <div class="controls">
+                <button class="cosmic-glass" id="prev-btn"><i class="fas fa-backward"></i></button>
+                <button class="cosmic-glass" id="play-btn"><i class="fas fa-play"></i></button>
+                <button class="cosmic-glass" id="next-btn"><i class="fas fa-forward"></i></button>
             </div>
         </div>
     </div>
 
-    <div id="youtube-player"></div>
+    <audio id="audio-player" style="display: none;" crossorigin="anonymous"></audio>
+    <script src="https://cdn.jsdelivr.net/npm/dashjs@4.5.0/dist/dash.all.min.js"></script>
 
-    <script src="https://www.youtube.com/iframe_api"></script>
     <script>
-        let player;
-        let isPlaying = false;
-        let currentVideoId = "";
-        let queue = [];
-        let currentIndex = -1;
-        let isDragging = false;
+        // Generate stars
+        const starsContainer = document.getElementById('stars');
+        for (let i = 0; i < 100; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 100 + '%';
+            star.style.animationDelay = Math.random() * 3 + 's';
+            starsContainer.appendChild(star);
+        }
 
-        function onYouTubeIframeAPIReady() {
-            player = new YT.Player("youtube-player", {
-                events: {
-                    onReady: () => {
-                        console.log("YT Player Ready");
-                        setInterval(updateProgress, 500);
-                    },
-                    onStateChange: onPlayerStateChange
+        const API_BASE = 'https://corsproxy.io/?https://wolf.qqdl.site';
+
+        // Liked songs storage
+        const LikedSongs = {
+            get() {
+                const liked = localStorage.getItem('cosmosLikedSongs');
+                return liked ? JSON.parse(liked) : [];
+            },
+            save(songs) {
+                localStorage.setItem('cosmosLikedSongs', JSON.stringify(songs));
+            },
+            add(track) {
+                const liked = this.get();
+                if (!liked.find(t => t.id === track.id)) {
+                    liked.push(track);
+                    this.save(liked);
                 }
-            });
-        }
-
-        function onPlayerStateChange(event) {
-            if (event.data === YT.PlayerState.ENDED) {
-                playNext();
+            },
+            remove(trackId) {
+                const liked = this.get().filter(t => t.id !== trackId);
+                this.save(liked);
+            },
+            isLiked(trackId) {
+                return this.get().some(t => t.id === trackId);
             }
-        }
+        };
 
-        // Queue panel toggle
-        document.getElementById("queue-toggle-btn").addEventListener("click", () => {
-            const panel = document.getElementById("queue-panel");
-            const btn = document.getElementById("queue-toggle-btn");
-            panel.classList.toggle("open");
-            btn.classList.toggle("active");
-        });
-
-        document.getElementById("close-queue-btn").addEventListener("click", () => {
-            document.getElementById("queue-panel").classList.remove("open");
-            document.getElementById("queue-toggle-btn").classList.remove("active");
-        });
-
-        // Now playing panel toggle
-        document.getElementById("bottom-song-info").addEventListener("click", () => {
-            if (currentVideoId) {
-                document.getElementById("now-playing-panel").classList.add("open");
+        class MusicAPI {
+            async search(query) {
+                try {
+                    const response = await fetch(`${API_BASE}/search?s=${encodeURIComponent(query)}`);
+                    const json = await response.json();
+                    
+                    const data = json.data || json;
+                    const items = (data.items || []).map(item => ({ ...item, _type: 'track' }));
+                    
+                    return { items };
+                } catch (e) {
+                    console.error('Search error:', e);
+                    return { items: [] };
+                }
             }
-        });
 
-        document.getElementById("close-now-playing").addEventListener("click", () => {
-            document.getElementById("now-playing-panel").classList.remove("open");
-        });
-
-        // Close now playing panel when clicking outside
-        document.getElementById("now-playing-panel").addEventListener("click", (e) => {
-            if (e.target.id === "now-playing-panel") {
-                document.getElementById("now-playing-panel").classList.remove("open");
+            async getTrack(id) {
+                try {
+                    const response = await fetch(`${API_BASE}/track/?id=${id}`);
+                    return await response.json();
+                } catch (e) {
+                    return null;
+                }
             }
-        });
 
-        document.getElementById("search-input").addEventListener("keypress", e => {
-            if (e.key === "Enter") {
-                let query = e.target.value.trim();
-                if (query) searchMusic(query);
-            }
-        });
+            extractStreamUrlFromManifest(manifest) {
+                try {
+                    const decoded = atob(manifest);
 
-        function searchMusic(query) {
-            const apiKey = "AIzaSyBEeolrRbBxIfISR-enmqo90aheJ1DgBJ8";
-            const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(query)}&type=video&videoCategoryId=10&maxResults=12&key=${apiKey}`;
-
-            fetch(url)
-                .then(res => res.json())
-                .then(data => {
-                    if (!data.items) {
-                        document.getElementById("song-results").innerHTML = '<div class="empty-state"><div class="empty-state-title">nothing found</div><div>search for something else</div></div>';
-                        return;
+                    if (decoded.includes('<MPD')) {
+                        const blob = new Blob([decoded], { type: 'application/dash+xml' });
+                        const blobUrl = URL.createObjectURL(blob);
+                        return blobUrl;
                     }
-                    const vids = data.items.filter(v => v.id.videoId);
-                    displayResults(vids);
-                })
-                .catch(err => {
-                    console.error(err);
-                    document.getElementById("song-results").innerHTML = '<div class="empty-state"><div class="empty-state-title">Search failed</div><div>Please try again</div></div>';
-                });
-        }
 
-        function displayResults(videos) {
-            const container = document.getElementById("song-results");
-            container.innerHTML = "";
-
-            videos.forEach(video => {
-                const div = document.createElement("div");
-                div.classList.add("result-card");
-                const thumbnailUrl = video.snippet.thumbnails.medium.url;
-
-                div.innerHTML = `
-                    <div class="result-thumbnail"><img src="${thumbnailUrl}" alt=""></div>
-                    <div class="result-info">
-                        <div class="result-title">${video.snippet.title}</div>
-                        <div class="result-artist">${video.snippet.channelTitle}</div>
-                    </div>
-                    <button class="add-btn">Add</button>
-                `;
-
-                div.querySelector('.add-btn').addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    addToQueue({
-                        videoId: video.id.videoId,
-                        title: video.snippet.title,
-                        artist: video.snippet.channelTitle,
-                        thumbnail: thumbnailUrl
-                    });
-                });
-
-                container.appendChild(div);
-            });
-        }
-
-        function addToQueue(song) {
-            queue.push(song);
-            updateQueueDisplay();
-            if (currentIndex === -1) {
-                currentIndex = 0;
-                playSongFromQueue(0);
-            }
-        }
-
-        function updateQueueDisplay() {
-            const queueContent = document.getElementById("queue-content");
-            if (queue.length === 0) {
-                queueContent.innerHTML = `<div class="queue-empty"><svg viewBox="0 0 24 24"><path d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v-2H3v2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z"/></svg><div>queue is currently empty</div><div style="font-size: 12px; margin-top: 8px;">add stuff to play</div></div>`;
-                return;
+                    try {
+                        const parsed = JSON.parse(decoded);
+                        if (parsed?.urls?.[0]) {
+                            return parsed.urls[0];
+                        }
+                    } catch {}
+                    
+                    const match = decoded.match(/https?:\/\/[\w\-.~:?#[@!$&'()*+,;=%/]+/);
+                    if (match) {
+                        return match[0];
+                    }
+                } catch (error) {}
+                return null;
             }
 
-            queueContent.innerHTML = "";
-            queue.forEach((song, index) => {
-                const div = document.createElement("div");
-                div.classList.add("queue-item");
-                if (index === currentIndex) div.classList.add("active");
-
-                div.innerHTML = `
-                    <div class="queue-thumbnail"><img src="${song.thumbnail}" alt=""></div>
-                    <div class="queue-info">
-                        <div class="queue-song-title">${song.title}</div>
-                        <div class="queue-artist">${song.artist}</div>
-                    </div>
-                    <button class="queue-remove"><svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button>
-                `;
-
-                div.addEventListener("click", (e) => {
-                    if (!e.target.closest('.queue-remove')) playSongFromQueue(index);
-                });
-
-                div.querySelector('.queue-remove').addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    removeFromQueue(index);
-                });
-
-                queueContent.appendChild(div);
-            });
-        }
-
-        function removeFromQueue(index) {
-            if (index === currentIndex && isPlaying) {
-                playNext();
-            } else if (index < currentIndex) {
-                currentIndex--;
-            }
-            queue.splice(index, 1);
-            updateQueueDisplay();
-        }
-
-        function playSongFromQueue(index) {
-            if (index < 0 || index >= queue.length) return;
-            currentIndex = index;
-            const song = queue[index];
-            currentVideoId = song.videoId;
-            updateSongInfo(song);
-            player.loadVideoById(song.videoId);
-            player.playVideo();
-            player.unMute();
-            isPlaying = true;
-            updateAllButtons();
-            updateQueueDisplay();
-        }
-
-        function updateSongInfo(song) {
-            document.getElementById("bottom-title").textContent = song.title;
-            document.getElementById("bottom-artist").textContent = song.artist;
-            const bottomImg = document.getElementById("bottom-img");
-            bottomImg.src = song.thumbnail;
-            bottomImg.style.display = "block";
-
-            document.getElementById("panel-title").textContent = song.title;
-            document.getElementById("panel-artist").textContent = song.artist;
-            const panelImg = document.getElementById("panel-img");
-            panelImg.src = song.thumbnail;
-            panelImg.style.display = "block";
-        }
-
-        document.getElementById("bottom-play-pause").addEventListener("click", togglePlayPause);
-        document.getElementById("bottom-next").addEventListener("click", playNext);
-        document.getElementById("bottom-prev").addEventListener("click", playPrev);
-        document.getElementById("panel-play-pause").addEventListener("click", togglePlayPause);
-        document.getElementById("panel-next").addEventListener("click", playNext);
-        document.getElementById("panel-prev").addEventListener("click", playPrev);
-
-        document.getElementById("panel-back-15").addEventListener("click", () => {
-            if (!currentVideoId) return;
-            const currentTime = player.getCurrentTime();
-            player.seekTo(Math.max(0, currentTime - 15), true);
-        });
-
-        document.getElementById("panel-forward-15").addEventListener("click", () => {
-            if (!currentVideoId) return;
-            const currentTime = player.getCurrentTime();
-            player.seekTo(currentTime + 15, true);
-        });
-
-        function togglePlayPause() {
-            if (!currentVideoId) return;
-            if (isPlaying) {
-                player.pauseVideo();
-                isPlaying = false;
-            } else {
-                player.playVideo();
-                player.unMute();
-                isPlaying = true;
-            }
-            updateAllButtons();
-        }
-
-        function playNext() {
-            if (currentIndex < queue.length - 1) playSongFromQueue(currentIndex + 1);
-        }
-
-        function playPrev() {
-            if (currentIndex > 0) playSongFromQueue(currentIndex - 1);
-        }
-
-        function updateAllButtons() {
-            const playIcon = '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>';
-            const pauseIcon = '<svg viewBox="0 0 24 24"><path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/></svg>';
-            const icon = isPlaying ? pauseIcon : playIcon;
-            document.getElementById("bottom-play-pause").innerHTML = icon;
-            document.getElementById("panel-play-pause").innerHTML = icon;
-        }
-
-        function updateProgress() {
-            if (!player || !player.getCurrentTime || isDragging) return;
-            try {
-                const current = player.getCurrentTime();
-                const total = player.getDuration();
-                if (total > 0) {
-                    const percent = (current / total) * 100;
-                    document.getElementById("bottom-progress-fill").style.width = percent + "%";
-                    document.getElementById("bottom-current-time").textContent = formatTime(current);
-                    document.getElementById("bottom-total-time").textContent = formatTime(total);
-                    document.getElementById("panel-time-fill").style.width = percent + "%";
-                    document.getElementById("panel-current-time").textContent = formatTime(current);
-                    document.getElementById("panel-total-time").textContent = formatTime(total);
+            getCoverUrl(id, size = '320') {
+                if (!id) return `https://picsum.photos/seed/${Math.random()}/${size}`;
+                if (typeof id === 'string' && (id.startsWith('http') || id.startsWith('blob:') || id.startsWith('assets/'))) {
+                    return id;
                 }
-            } catch (e) {}
+                const formattedId = id.replace(/-/g, '/');
+                return `https://resources.tidal.com/images/${formattedId}/${size}x${size}.jpg`;
+            }
+
+            getItemTitle(item) {
+                return item.title || 'Unknown';
+            }
+
+            getItemSubtitle(item) {
+                return item.artist?.name || '';
+            }
+
+            getItemCover(item) {
+                return item.album?.cover;
+            }
+        }
+
+        class Player {
+            constructor(audioElement) {
+                this.audio = audioElement;
+                this.queue = [];
+                this.currentIndex = 0;
+                this.listeners = [];
+                this.dashPlayer = null;
+
+                this.audio.addEventListener('play', () => this.notify('play'));
+                this.audio.addEventListener('pause', () => this.notify('pause'));
+                this.audio.addEventListener('ended', () => this.playNext());
+                this.audio.addEventListener('timeupdate', () => this.notify('timeupdate'));
+                this.audio.addEventListener('error', () => this.notify('error'));
+            }
+
+            setQueue(tracks) {
+                this.queue = tracks;
+                this.currentIndex = 0;
+            }
+
+            async play(track) {
+                try {
+                    const trackData = await api.getTrack(track.id);
+
+                    if (trackData?.data?.manifest) {
+                        const streamUrl = api.extractStreamUrlFromManifest(trackData.data.manifest);
+                        
+                        if (streamUrl && streamUrl.startsWith('blob:')) {
+                            if (typeof dashjs !== 'undefined') {
+                                if (!this.dashPlayer) {
+                                    this.dashPlayer = dashjs.MediaPlayer().create();
+                                }
+                                this.dashPlayer.initialize(this.audio, streamUrl, true);
+                                this.notify('track-changed');
+                            }
+                        } else if (streamUrl) {
+                            this.audio.src = streamUrl;
+                            this.audio.play().then(() => this.notify('track-changed'));
+                        }
+                    }
+                } catch (e) {
+                    console.error('Play error:', e);
+                }
+            }
+
+            playPause() {
+                if (this.audio.paused) {
+                    this.audio.play();
+                } else {
+                    this.audio.pause();
+                }
+            }
+
+            playNext() {
+                if (this.currentIndex < this.queue.length - 1) {
+                    this.currentIndex++;
+                    this.play(this.queue[this.currentIndex]);
+                }
+            }
+
+            playPrev() {
+                if (this.currentIndex > 0) {
+                    this.currentIndex--;
+                    this.play(this.queue[this.currentIndex]);
+                }
+            }
+
+            getCurrentTrack() {
+                return this.queue[this.currentIndex];
+            }
+
+            on(event, callback) {
+                this.listeners.push({ event, callback });
+            }
+
+            notify(event) {
+                this.listeners.forEach(({ event: e, callback }) => {
+                    if (e === event) callback();
+                });
+            }
         }
 
         function formatTime(seconds) {
             const mins = Math.floor(seconds / 60);
             const secs = Math.floor(seconds % 60);
-            return `${mins}:${secs.toString().padStart(2, '0')}`;
+            return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
         }
 
-        const bottomProgressBar = document.getElementById("bottom-progress-bar");
-        bottomProgressBar.addEventListener("mousedown", (e) => {
-            if (!currentVideoId) return;
-            isDragging = true;
-            seekToPosition(e, bottomProgressBar);
-        });
+        const debounce = (func, wait) => {
+            let timeout;
+            return function(...args) {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func(...args), wait);
+            };
+        };
 
-        document.addEventListener("mousemove", (e) => {
-            if (isDragging) seekToPosition(e, bottomProgressBar);
-        });
-
-        document.addEventListener("mouseup", () => {
-            isDragging = false;
-        });
-
-        const panelTimeBar = document.getElementById("panel-time-bar");
-        panelTimeBar.addEventListener("mousedown", (e) => {
-            if (!currentVideoId) return;
-            isDragging = true;
-            seekToPosition(e, panelTimeBar);
-        });
-
-        panelTimeBar.addEventListener("mousemove", (e) => {
-            if (isDragging) seekToPosition(e, panelTimeBar);
-        });
-
-        function seekToPosition(e, element) {
-            const rect = element.getBoundingClientRect();
-            const percent = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
-            const duration = player.getDuration();
-            const seekTime = duration * percent;
-            player.seekTo(seekTime, true);
-            document.getElementById("bottom-progress-fill").style.width = (percent * 100) + "%";
-            document.getElementById("panel-time-fill").style.width = (percent * 100) + "%";
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
         }
+
+        const api = new MusicAPI();
+        const player = new Player(document.getElementById('audio-player'));
+        let currentSearchResults = [];
+        let currentTab = 'search';
+
+        function switchTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.closest('.tab-btn').classList.add('active');
+            
+            if (tab === 'search') {
+                document.getElementById('search-tab').style.display = 'block';
+                document.getElementById('liked-tab').style.display = 'none';
+            } else {
+                document.getElementById('search-tab').style.display = 'none';
+                document.getElementById('liked-tab').style.display = 'block';
+                displayLikedSongs();
+            }
+        }
+
+        function toggleLike(track, event) {
+            event.stopPropagation();
+            if (LikedSongs.isLiked(track.id)) {
+                LikedSongs.remove(track.id);
+            } else {
+                LikedSongs.add(track);
+            }
+            
+            if (currentTab === 'search') {
+                performSearch(document.getElementById('search-input').value);
+            } else {
+                displayLikedSongs();
+            }
+        }
+
+        function displayLikedSongs() {
+            const liked = LikedSongs.get();
+            const container = document.getElementById('liked-results');
+            
+            if (liked.length === 0) {
+                container.innerHTML = '<div style="color: #999; padding: 20px; text-align: center;">No liked songs yet</div>';
+                return;
+            }
+            
+            container.innerHTML = liked.map(track => `
+                <div class="result cosmic-glass" onclick='playTrack(${JSON.stringify(track).replace(/'/g, "&#39;")})'>
+                    <img src="${api.getCoverUrl(track.album?.cover)}" alt="${escapeHtml(track.title)}" height="48">
+                    <div class="info">
+                        <div class="title">${escapeHtml(track.title)}</div>
+                        <div class="artist">${escapeHtml(track.artist?.name || 'Unknown')}</div>
+                    </div>
+                    <button class="like-btn liked" onclick='toggleLike(${JSON.stringify(track).replace(/'/g, "&#39;")}, event)'>
+                        <i class="fas fa-heart"></i>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        const performSearch = debounce(async (query) => {
+            if (!query.trim()) {
+                document.getElementById('results').innerHTML = '<div style="color: #999; padding: 20px;">Start typing to search the cosmos...</div>';
+                return;
+            }
+
+            document.getElementById('results').innerHTML = '<div style="color: #999; padding: 20px;">Searching the cosmos...</div>';
+            const results = await api.search(query);
+
+            if (results.items && results.items.length > 0) {
+                currentSearchResults = results.items.filter(item => item._type === 'track');
+                document.getElementById('results').innerHTML = results.items
+                    .map((item) => {
+                        const isLiked = LikedSongs.isLiked(item.id);
+                        return `
+                            <div class="result cosmic-glass" onclick='playTrack(${JSON.stringify(item).replace(/'/g, "&#39;")})'>
+                                <img src="${api.getCoverUrl(item.album?.cover)}" alt="${escapeHtml(item.title)}" height="48">
+                                <div class="info">
+                                    <div class="title">${escapeHtml(item.title)}</div>
+                                    <div class="artist">${escapeHtml(item.artist?.name || 'Unknown')}</div>
+                                </div>
+                                <button class="like-btn ${isLiked ? 'liked' : ''}" onclick='toggleLike(${JSON.stringify(item).replace(/'/g, "&#39;")}, event)'>
+                                    <i class="fas fa-heart"></i>
+                                </button>
+                            </div>
+                        `;
+                    }).join('');
+            } else {
+                document.getElementById('results').innerHTML = '<div style="color: #999; padding: 20px;">No results found in the cosmos</div>';
+            }
+        }, 300);
+
+        document.getElementById('search-input').addEventListener('input', (e) => {
+            performSearch(e.target.value);
+        });
+
+        function playTrack(track) {
+            player.setQueue(currentTab === 'search' ? currentSearchResults : LikedSongs.get());
+            const queue = currentTab === 'search' ? currentSearchResults : LikedSongs.get();
+            const trackIndex = queue.findIndex(t => t.id === track.id);
+            if (trackIndex !== -1) {
+                player.currentIndex = trackIndex;
+            }
+            player.play(track);
+            updateNowPlaying(track);
+        }
+
+        function updateNowPlaying(track) {
+            if (track) {
+                document.getElementById('song-name').textContent = track.title || 'Unknown';
+                document.getElementById('artist-name').textContent = track.artist?.name || 'Unknown Artist';
+                const imgSrc = api.getCoverUrl(track.album?.cover);
+                document.getElementById('cover-img').innerHTML = `<img src="${imgSrc}" style="width: 100%; height: 100%; border-radius: 1.5rem; object-fit: cover;">`;
+                if (track.duration) {
+                    document.getElementById('total-time').textContent = formatTime(track.duration);
+                }
+            }
+        }
+
+        document.getElementById('play-btn').addEventListener('click', () => player.playPause());
+        document.getElementById('prev-btn').addEventListener('click', () => player.playPrev());
+        document.getElementById('next-btn').addEventListener('click', () => player.playNext());
+
+        document.querySelector('.progress-bar').addEventListener('click', (e) => {
+            const rect = e.currentTarget.getBoundingClientRect();
+            const percent = (e.clientX - rect.left) / rect.width;
+            player.audio.currentTime = percent * player.audio.duration;
+        });
+
+        player.on('timeupdate', () => {
+            const duration = player.audio.duration || 0;
+            const current = player.audio.currentTime || 0;
+            
+            if (duration > 0 && !isNaN(duration)) {
+                const percent = (current / duration) * 100;
+                document.querySelector('.progress-inner').style.width = `${percent}%`;
+                document.getElementById('current-time').textContent = formatTime(current);
+                if (document.getElementById('total-time').textContent === '0:00') {
+                    document.getElementById('total-time').textContent = formatTime(duration);
+                }
+            }
+        });
+
+        player.on('play', () => {
+            document.getElementById('play-btn').innerHTML = '<i class="fas fa-pause"></i>';
+        });
+
+        player.on('pause', () => {
+            document.getElementById('play-btn').innerHTML = '<i class="fas fa-play"></i>';
+        });
+
+        player.on('track-changed', () => {
+            updateNowPlaying(player.getCurrentTrack());
+        });
     </script>
+
 </body>
+
 </html>
