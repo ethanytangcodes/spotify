@@ -447,7 +447,14 @@
             starsContainer.appendChild(star);
         }
 
-        const API_BASE = 'https://corsproxy.io/?https://wolf.qqdl.site';
+        // Try multiple API options - some may work better with school filters
+        const API_OPTIONS = [
+            'https://api.allorigins.win/raw?url=https://wolf.qqdl.site',
+            'https://corsproxy.io/?https://wolf.qqdl.site',
+            'https://api.codetabs.com/v1/proxy?quest=https://wolf.qqdl.site'
+        ];
+        
+        let API_BASE = API_OPTIONS[0]; // Start with first option
 
         // Liked songs storage
         const LikedSongs = {
