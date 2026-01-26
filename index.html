@@ -22,7 +22,6 @@
             position: relative;
         }
 
-        /* Animated stars background */
         @keyframes twinkle {
             0%, 100% { opacity: 0.3; }
             50% { opacity: 1; }
@@ -303,6 +302,75 @@
             color: #b8b8ff;
             font-size: 11px;
         }
+
+        /* Lyrics styles */
+        .lyrics-container {
+            height: 100%;
+            overflow-y: auto;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .lyric-line {
+            padding: 12px 16px;
+            margin: 4px 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-radius: 8px;
+            color: #888;
+            font-size: 15px;
+            text-align: center;
+            width: 100%;
+        }
+
+        .lyric-line:hover {
+            background: rgba(138, 43, 226, 0.1);
+            color: #b8b8ff;
+        }
+
+        .lyric-line.active {
+            color: #fff;
+            font-size: 18px;
+            font-weight: 600;
+            background: rgba(138, 43, 226, 0.2);
+            transform: scale(1.05);
+        }
+
+        .lyric-line.past {
+            color: #666;
+        }
+
+        .no-lyrics {
+            color: #888;
+            text-align: center;
+            padding: 40px 20px;
+            font-size: 14px;
+        }
+
+        .lyrics-toggle {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(138, 43, 226, 0.3);
+            border: 1px solid rgba(138, 43, 226, 0.5);
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            color: #fff;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .lyrics-toggle:hover {
+            background: rgba(138, 43, 226, 0.5);
+        }
+
+        .lyrics-toggle i {
+            margin-right: 5px;
+        }
     </style>
 </head>
 
@@ -318,6 +386,9 @@
                 <button class="tab-btn" onclick="switchTab('liked')">
                     <i class="fas fa-heart"></i> Liked
                 </button>
+                <button class="tab-btn" onclick="switchTab('lyrics')">
+                    <i class="fas fa-align-left"></i> Lyrics
+                </button>
             </div>
             
             <div id="search-tab">
@@ -331,6 +402,12 @@
             
             <div id="liked-tab" style="display: none; height: 100%; overflow-y: auto;">
                 <div id="liked-results"></div>
+            </div>
+
+            <div id="lyrics-tab" style="display: none; height: 100%;">
+                <div class="lyrics-container" id="lyrics-container">
+                    <div class="no-lyrics">Play a song to view lyrics</div>
+                </div>
             </div>
         </div>
         
@@ -396,6 +473,96 @@
                 return this.get().some(t => t.id === trackId);
             }
         };
+
+        // Lyrics Manager
+        const LyricsManager = {
+            currentLyrics: [],
+            
+            async fetchLyrics(artist, title) {
+                try {
+                    const response = await fetch(`https://api.lyrics.ovh/v1/${encodeURIComponent(artist)}/${encodeURIComponent(title)}`);
+                    if (!response.ok) throw new Error('Lyrics not found');
+                    const data = await response.json();
+                    return this.parseLyrics(data.lyrics);
+                } catch (error) {
+                    console.error('Failed to fetch lyrics:', error);
+                    return null;
+                }
+            },
+
+            parseLyrics(lyricsText) {
+                if (!lyricsText) return null;
+                
+                // Split lyrics into lines and estimate timing
+                const lines = lyricsText.split('\n').filter(line => line.trim());
+                const totalLines = lines.length;
+                
+                // Estimate time per line based on song duration
+                const duration = player.audio.duration || 180; // default 3 minutes
+                const timePerLine = duration / totalLines;
+                
+                return lines.map((text, index) => ({
+                    text: text.trim(),
+                    time: index * timePerLine,
+                    index: index
+                }));
+            },
+
+            displayLyrics(lyrics) {
+                const container = document.getElementById('lyrics-container');
+                
+                if (!lyrics || lyrics.length === 0) {
+                    container.innerHTML = '<div class="no-lyrics">No lyrics available for this song</div>';
+                    this.currentLyrics = [];
+                    return;
+                }
+                
+                this.currentLyrics = lyrics;
+                container.innerHTML = lyrics.map((line, index) => `
+                    <div class="lyric-line" data-time="${line.time}" data-index="${index}" onclick="seekToLyric(${line.time})">
+                        ${escapeHtml(line.text)}
+                    </div>
+                `).join('');
+            },
+
+            updateActiveLine(currentTime) {
+                if (this.currentLyrics.length === 0) return;
+                
+                // Find the current lyric line with lookahead
+                let currentIndex = -1;
+                for (let i = 0; i < this.currentLyrics.length; i++) {
+                    // Check if we're past this line's start time
+                    // and before the next line's start time (with a small buffer)
+                    const nextLineTime = i < this.currentLyrics.length - 1 
+                        ? this.currentLyrics[i + 1].time 
+                        : Infinity;
+                    
+                    if (currentTime >= this.currentLyrics[i].time && currentTime < nextLineTime) {
+                        currentIndex = i;
+                        break;
+                    }
+                }
+
+                // Update all lines
+                const lines = document.querySelectorAll('.lyric-line');
+                lines.forEach((line, index) => {
+                    line.classList.remove('active', 'past');
+                    if (index === currentIndex) {
+                        line.classList.add('active');
+                        // Auto-scroll to active line
+                        line.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    } else if (index < currentIndex) {
+                        line.classList.add('past');
+                    }
+                });
+            }
+        };
+
+        function seekToLyric(time) {
+            if (player.audio && !isNaN(time)) {
+                player.audio.currentTime = time;
+            }
+        }
 
         class MusicAPI {
             async search(query) {
@@ -482,6 +649,7 @@
                 this.audio.addEventListener('ended', () => this.playNext());
                 this.audio.addEventListener('timeupdate', () => this.notify('timeupdate'));
                 this.audio.addEventListener('error', () => this.notify('error'));
+                this.audio.addEventListener('loadedmetadata', () => this.notify('metadata-loaded'));
             }
 
             setQueue(tracks) {
@@ -581,13 +749,17 @@
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             event.target.closest('.tab-btn').classList.add('active');
             
+            document.getElementById('search-tab').style.display = 'none';
+            document.getElementById('liked-tab').style.display = 'none';
+            document.getElementById('lyrics-tab').style.display = 'none';
+            
             if (tab === 'search') {
                 document.getElementById('search-tab').style.display = 'block';
-                document.getElementById('liked-tab').style.display = 'none';
-            } else {
-                document.getElementById('search-tab').style.display = 'none';
+            } else if (tab === 'liked') {
                 document.getElementById('liked-tab').style.display = 'block';
                 displayLikedSongs();
+            } else if (tab === 'lyrics') {
+                document.getElementById('lyrics-tab').style.display = 'block';
             }
         }
 
@@ -635,7 +807,7 @@
                 return;
             }
 
-            document.getElementById('results').innerHTML = '<div style="color: #999; padding: 20px;">Searching the cosmos...</div>';
+            document.getElementById('results').innerHTML = '<div style="color: #999; padding: 20px;">Searching the universe...</div>';
             const results = await api.search(query);
 
             if (results.items && results.items.length > 0) {
@@ -665,7 +837,7 @@
             performSearch(e.target.value);
         });
 
-        function playTrack(track) {
+        async function playTrack(track) {
             player.setQueue(currentTab === 'search' ? currentSearchResults : LikedSongs.get());
             const queue = currentTab === 'search' ? currentSearchResults : LikedSongs.get();
             const trackIndex = queue.findIndex(t => t.id === track.id);
@@ -674,6 +846,12 @@
             }
             player.play(track);
             updateNowPlaying(track);
+            
+            // Fetch and display lyrics
+            const artist = track.artist?.name || 'Unknown';
+            const title = track.title || 'Unknown';
+            const lyrics = await LyricsManager.fetchLyrics(artist, title);
+            LyricsManager.displayLyrics(lyrics);
         }
 
         function updateNowPlaying(track) {
@@ -709,6 +887,21 @@
                 if (document.getElementById('total-time').textContent === '0:00') {
                     document.getElementById('total-time').textContent = formatTime(duration);
                 }
+            }
+
+            // Update active lyric line
+            LyricsManager.updateActiveLine(current);
+        });
+
+        player.on('metadata-loaded', () => {
+            // Re-parse lyrics with actual duration
+            if (LyricsManager.currentLyrics.length > 0 && player.getCurrentTrack()) {
+                const track = player.getCurrentTrack();
+                const artist = track.artist?.name || 'Unknown';
+                const title = track.title || 'Unknown';
+                LyricsManager.fetchLyrics(artist, title).then(lyrics => {
+                    LyricsManager.displayLyrics(lyrics);
+                });
             }
         });
 
