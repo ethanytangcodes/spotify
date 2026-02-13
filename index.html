@@ -18,7 +18,7 @@
         }
 
         body {
-            background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%);
+            background: radial-gradient(ellipse at bottom, #1a0f1a 0%, #0a0505 100%);
             position: relative;
         }
 
@@ -68,13 +68,13 @@
             gap: 12px;
             padding: 12px 32px;
             border-radius: 1.5rem;
-            border: 1px solid rgba(138, 43, 226, 0.3);
+            border: 1px solid rgba(222, 49, 99, 0.3);
             background: rgba(15, 15, 35, 0.7);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
             box-shadow:
-                inset 0 2px 4px rgba(138, 43, 226, 0.1),
-                0 8px 32px rgba(75, 0, 130, 0.3);
+                inset 0 2px 4px rgba(222, 49, 99, 0.1),
+                0 8px 32px rgba(222, 49, 99, 0.3);
             color: #ffffff;
             font-size: 24px;
             transition: all 0.3s ease;
@@ -88,9 +88,9 @@
             border-radius: 1.5rem;
             padding: 1px;
             background: linear-gradient(135deg,
-                    rgba(138, 43, 226, 0.5) 0%,
-                    rgba(75, 0, 130, 0.3) 50%,
-                    rgba(138, 43, 226, 0.5) 100%);
+                    rgba(222, 49, 99, 0.5) 0%,
+                    rgba(248, 131, 121, 0.3) 50%,
+                    rgba(222, 49, 99, 0.5) 100%);
             -webkit-mask:
                 linear-gradient(#fff 0 0) content-box,
                 linear-gradient(#fff 0 0);
@@ -107,8 +107,8 @@
         }
 
         .input-wrapper:has(input:focus) {
-            background: rgba(138, 43, 226, 0.15);
-            border-color: rgba(138, 43, 226, 0.5);
+            background: rgba(222, 49, 99, 0.15);
+            border-color: rgba(222, 49, 99, 0.5);
         }
 
         .result img {
@@ -138,7 +138,7 @@
 
         .result:hover {
             cursor: pointer;
-            background: rgba(138, 43, 226, 0.15);
+            background: rgba(222, 49, 99, 0.15);
             transform: translateX(5px);
         }
 
@@ -166,14 +166,14 @@
             width: 280px;
             height: 280px;
             border-radius: 1.5rem;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #DE3163 0%, #F88379 100%);
             position: relative;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 20px 40px rgba(138, 43, 226, 0.4);
+            box-shadow: 0 20px 40px rgba(222, 49, 99, 0.4);
         }
 
         #cover-img i {
@@ -207,7 +207,7 @@
         .progress-bar {
             width: 280px;
             height: 6px;
-            background: rgba(138, 43, 226, 0.2);
+            background: rgba(222, 49, 99, 0.2);
             border-radius: 4px;
             margin: 15px auto 0 auto;
             overflow: hidden;
@@ -217,8 +217,8 @@
         .progress-inner {
             width: 0;
             height: 100%;
-            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-            box-shadow: 0 0 15px rgba(138, 43, 226, 0.8);
+            background: linear-gradient(90deg, #DE3163 0%, #F88379 100%);
+            box-shadow: 0 0 15px rgba(222, 49, 99, 0.8);
             border-radius: 4px;
             transition: width 0.1s linear;
         }
@@ -237,8 +237,8 @@
 
         .controls button:hover {
             transform: scale(1.1);
-            background: rgba(138, 43, 226, 0.25);
-            box-shadow: 0 8px 32px rgba(138, 43, 226, 0.4);
+            background: rgba(222, 49, 99, 0.25);
+            box-shadow: 0 8px 32px rgba(222, 49, 99, 0.4);
         }
 
         #results {
@@ -250,12 +250,12 @@
 
         ::-webkit-scrollbar {
             width: 4px;
-            background: rgba(138, 43, 226, 0.1);
+            background: rgba(222, 49, 99, 0.1);
             border-radius: 10px;
         }
 
         ::-webkit-scrollbar-thumb {
-            background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(180deg, #DE3163 0%, #F88379 100%);
             border-radius: 10px;
         }
 
@@ -268,8 +268,8 @@
         .tab-btn {
             flex: 1;
             padding: 10px;
-            background: rgba(138, 43, 226, 0.1);
-            border: 1px solid rgba(138, 43, 226, 0.3);
+            background: rgba(222, 49, 99, 0.1);
+            border: 1px solid rgba(222, 49, 99, 0.3);
             border-radius: 12px;
             color: #b8b8ff;
             cursor: pointer;
@@ -278,13 +278,13 @@
         }
 
         .tab-btn:hover {
-            background: rgba(138, 43, 226, 0.2);
+            background: rgba(222, 49, 99, 0.2);
         }
 
         .tab-btn.active {
-            background: rgba(138, 43, 226, 0.3);
+            background: rgba(222, 49, 99, 0.3);
             color: #fff;
-            border-color: rgba(138, 43, 226, 0.5);
+            border-color: rgba(222, 49, 99, 0.5);
         }
 
         .progress-timers {
@@ -326,7 +326,7 @@
         }
 
         .lyric-line:hover {
-            background: rgba(138, 43, 226, 0.1);
+            background: rgba(222, 49, 99, 0.1);
             color: #b8b8ff;
         }
 
@@ -334,7 +334,7 @@
             color: #fff;
             font-size: 18px;
             font-weight: 600;
-            background: rgba(138, 43, 226, 0.2);
+            background: rgba(222, 49, 99, 0.2);
             transform: scale(1.05);
         }
 
@@ -354,8 +354,8 @@
             bottom: 10px;
             left: 50%;
             transform: translateX(-50%);
-            background: rgba(138, 43, 226, 0.3);
-            border: 1px solid rgba(138, 43, 226, 0.5);
+            background: rgba(222, 49, 99, 0.3);
+            border: 1px solid rgba(222, 49, 99, 0.5);
             padding: 8px 16px;
             border-radius: 20px;
             cursor: pointer;
@@ -365,7 +365,7 @@
         }
 
         .lyrics-toggle:hover {
-            background: rgba(138, 43, 226, 0.5);
+            background: rgba(222, 49, 99, 0.5);
         }
 
         .lyrics-toggle i {
